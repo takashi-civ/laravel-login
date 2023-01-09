@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginFormRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -24,15 +25,41 @@ class AuthController extends Controller
   */
   public function Login(LoginFormRequest $request)
   {
-    //dd($request->only('email','password'));
     $credentials = $request->only('email','password');
+    $user = User::where('email','=',$credentials['email'])->first();
+    // $userがnullではなかったらログイン処理の準備に入る
+    if(!is_null($user))
+    {
+      if($user->locked_flg === 1)
+      {
+        return back()->withErrors([
+          'danger' => 'アカウントがロックされています。',
+        ]);
+      }
+      //アカウントがロックされていなければログイン処理を行う
+      if(Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        //成功したらエラーカウントを0にする
+        if ($user->error_count > 0)
+        {
+          $user->error_count = 0;
+          $user->save();
+        }
+        return redirect()->route('home')->with('login_success','ログイン成功しました。');
 
-    if(Auth::attempt($credentials)) {
-      $request->session()->regenerate();
-
-      return redirect()->route('home')->with('login_success','ログイン成功しました。');
-
+      }
+      //ログイン失敗したらエラーカウントを１増やす
+      $user->error_count = $user->error_count + 1;
+      //error_countが5より上の場合アカウントをロックする。
+      if($user->error_count > 5) {
+        $user->locked_flg = 1;
+        $user->save();
+        return back()->withErrors([
+          'danger' => 'アカウントがロックされました。解除したい場合は運営に連絡してください。',
+        ]);
+      }
     }
+    $user->save();
     return back()->withErrors([
       'login_error' => 'メールアドレスかパスワードが間違っています。',
     ]);

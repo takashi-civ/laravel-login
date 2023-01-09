@@ -28,7 +28,7 @@
     @endif
 
     <x-alert type="danger" :session="session('login_err')" />
-    
+
     <x-alert type="danger" :session="session('logout')" />
 
     <label for="inputEmail" class="sr-only">Email address</label>

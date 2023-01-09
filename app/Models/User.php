@@ -21,8 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'locked',
-        'error_token',
+        'locked_flg',
+        'error_count',
     ];
 
     /**
