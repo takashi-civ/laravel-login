@@ -11,30 +11,34 @@
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
   <link href="{{ asset('css/signin.css') }}" rel="stylesheet">
 
-  </script>
-  <body>
+</script>
+<body>
 
-    <form class="form-signin" method="post" action="{{ route('login') }}">
-      @csrf
-      <h1 class="h3 mb-3 font-weight-normal">ログインフォーム</h1>
-      @if ($errors->any())
-        <div class="alert alert-danger">
-          <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-        </div>
-      @endif
+  <form class="form-signin" method="post" action="{{ route('login') }}">
+    @csrf
+    <h1 class="h3 mb-3 font-weight-normal">ログインフォーム</h1>
+    @if ($errors->any())
+    <div class="alert alert-danger">
+      <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+    @endif
 
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required autofocus>
-      <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required>
-      <div class="checkbox mb-3">
-      </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
+    <x-alert type="danger" :session="session('login_err')" />
+    
+    <x-alert type="danger" :session="session('logout')" />
 
-  </body>
-  </html>
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required>
+    <div class="checkbox mb-3">
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+  </form>
+
+</body>
+</html>
